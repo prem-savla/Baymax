@@ -15,7 +15,6 @@ A modular, multi-node blockchain prototype for **federated learning**. Nodes com
 - [Repository Layout](#repository-layout)  
 - [Diagrams & Visuals (Placeholders)](#diagrams--visuals-placeholders)  
 - [Limitations & Improvements](#limitations--improvements)  
-- [License](#license)
 
 ---
 
@@ -69,6 +68,18 @@ A modular, multi-node blockchain prototype for **federated learning**. Nodes com
   - Linux/Windows users: run nodes manually (see **Usage**) or adapt the launcher.  
 - `bash`, `zsh`, `javac` available in PATH
 
+### Fault Tolerance Requirement
+To tolerate up to **f** faulty or malicious nodes in the BFT-inspired consensus,  
+the total number of nodes **n** must satisfy:
+
+    3f + 1 ≤ n
+
+Example:  
+- For `f = 1`, you need at least `n = 4` total nodes.  
+- For `f = 2`, you need at least `n = 7` total nodes.
+
+This ensures quorum (`2f + 1` votes) can be reached even with faulty nodes present.
+
 ### 1) Clone
 ```bash
 git clone https://github.com/<your-username>/<your-repo>.git
@@ -110,7 +121,7 @@ The launcher will:
 ### Manual run (per node)
 ```bash
 # Example
-java -cp out Node node1 model_v1.h5 5001 5002,5003 0 10
+java -cp out Node node1 densenet121 5001 5002,5003 0 10
 #           ^id   ^model          ^myPort ^peerPorts  ^faultyCount ^timeoutSecs
 ```
 
@@ -164,11 +175,10 @@ node3,5003,model_v1.h5,10,true
 
 ---
 
-## Diagrams & Visuals (Placeholders)
-
-> Replace the image paths below with your exported diagrams or keep Mermaid for inline GitHub rendering.
+## Diagrams & Visuals 
 
 ### 1) System Architecture 
+```
 +-----------------+       TCP Sockets       +-----------------+
 |   Node A        | <---------------------> |    Node B       |
 |  - Blockchain   |                         |  - Blockchain   |
@@ -186,8 +196,9 @@ node3,5003,model_v1.h5,10,true
 +-----------------+                         +-----------------+
 
 Message flow: PROPOSE → VOTE → COMMIT
-
-### 2) Consensus Sequence 
+```
+### 2) Consensus Sequence
+```
 Node A        Node B        Node C
   |             |             |
   |--PROPOSE--->|             |
@@ -200,8 +211,9 @@ Node A        Node B        Node C
   |--COMMIT--------------->   |
   |             |             |
 Quorum reached → State reset → Next round
-
+```
 ### 3) Class Overview 
+```
 +--------------+
 |   Node       |
 +--------------+
@@ -230,8 +242,9 @@ Quorum reached → State reset → Next round
 Other:  
 Block <-> Blockchain  
 CryptoUtils (sign, verify, hash)
-
+```
 ### 4) FL Flow 
+```
 [Keras Model Training @ Node] 
         |
         v
@@ -248,7 +261,7 @@ CryptoUtils (sign, verify, hash)
         |
         v
 [Aggregated Global Model]
-
+```
 ---
 
 ## Limitations & Improvements
