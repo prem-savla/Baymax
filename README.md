@@ -168,32 +168,86 @@ node3,5003,model_v1.h5,10,true
 
 > Replace the image paths below with your exported diagrams or keep Mermaid for inline GitHub rendering.
 
-### 1) System Architecture (placeholder)
-![System Architecture](docs/architecture.png)  
-*Suggestion:* Nodes, sockets, message flow (`PROPOSE → VOTE → COMMIT`), and major classes.
+### 1) System Architecture 
++-----------------+       TCP Sockets       +-----------------+
+|   Node A        | <---------------------> |    Node B       |
+|  - Blockchain   |                         |  - Blockchain   |
+|  - MessageHandler|                         |  - MessageHandler|
+|  - PortLink     |                         |  - PortLink     |
++-----------------+                         +-----------------+
+         ^                                           ^
+         |                                           |
+         v                                           v
++-----------------+                         +-----------------+
+|   Node C        | <---------------------> |    Node D       |
+|  - Blockchain   |                         |  - Blockchain   |
+|  - MessageHandler|                         |  - MessageHandler|
+|  - PortLink     |                         |  - PortLink     |
++-----------------+                         +-----------------+
 
-### 2) Consensus Sequence (Mermaid)
-```mermaid
-sequenceDiagram
-    participant A as Node A
-    participant B as Node B
-    participant C as Node C
+Message flow: PROPOSE → VOTE → COMMIT
 
-    A->>B: PROPOSE(Block)
-    A->>C: PROPOSE(Block)
-    B->>A: VOTE(BlockId)
-    C->>A: VOTE(BlockId)
-    A->>A: Quorum reached → COMMIT
-    Note over A,B,C: Round increments, state resets
-```
+### 2) Consensus Sequence 
+Node A        Node B        Node C
+  |             |             |
+  |--PROPOSE--->|             |
+  |--PROPOSE--------------->  |
+  |             |             |
+  |<--VOTE------|             |
+  |             |<--VOTE------|
+  |             |             |
+  |--COMMIT---> |             |
+  |--COMMIT--------------->   |
+  |             |             |
+Quorum reached → State reset → Next round
 
-### 3) Class Overview (placeholder)
-![Class Diagram](docs/class-diagram.png)  
-*Suggestion:* Node, Message, MessageHandler, Blockchain, Block, PortLink, CryptoUtils.
+### 3) Class Overview 
++--------------+
+|   Node       |
++--------------+
+| - id         |
+| - peers[]    |
+| - blockchain |
+| - handler    |
++--------------+
+       |
+       v
++--------------+       +--------------+
+| Message      |       | PortLink     |
++--------------+       +--------------+
+| - type       |       | - myPort     |
+| - payload    |       | - peerPorts[]|
++--------------+       +--------------+
+       |
+       v
++--------------+
+| MessageHandler|
++--------------+
+| - queue      |
+| - process()  |
++--------------+
 
-### 4) FL Flow (placeholder)
-![Federated Learning Flow](docs/federated-learning-flow.png)  
-*Suggestion:* Keras model → node update → block proposal → consensus → global model.
+Other:  
+Block <-> Blockchain  
+CryptoUtils (sign, verify, hash)
+
+### 4) FL Flow 
+[Keras Model Training @ Node] 
+        |
+        v
+[Model Weights Update]
+        |
+        v
+[Propose Block with Update]
+        |
+        v
+[Consensus (BFT-inspired)]
+        |
+        v
+[Block Commit to Ledger]
+        |
+        v
+[Aggregated Global Model]
 
 ---
 
@@ -213,12 +267,6 @@ sequenceDiagram
   → *Integrate structured logging, metrics, health checks.*
 - **macOS-specific launcher**: AppleScript + Terminal.  
   → *Provide cross-platform scripts (Linux `gnome-terminal`, Windows `cmd`/PowerShell) or Docker Compose.*
-
----
-
-## License
-
-MIT (recommendation). Add your chosen license file to the repo root.
 
 ---
 
