@@ -1,0 +1,4 @@
+id,port,model,timeoutSeconds,faulty
+HospitalA,1234,DenseNet+FedAdam,3,false
+HospitalB,1235,DenseNet+FedAdam,3,false
+HospitalC,1236,DenseNet+FedAdam,3,false
